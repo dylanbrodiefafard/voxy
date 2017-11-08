@@ -1,0 +1,32 @@
+Library goals/features:
+	input: continuous mesh; output: discrete voxy mesh
+	input: discrete voxy mesh, sub voxy pallete; output: sub voxy mesh
+	
+
+continuous mesh:
+	vertices, triangles, UVs, colors, textures
+
+voxel:
+	grayscale value
+	visibility
+	size
+	grid coordinate
+	spatial coordinates
+
+sub voxel:
+	voxel
+	sub voxel shape
+	color/texture
+
+discrete voxy mesh:
+	voxel size, bounding box, voxel array, voxelized continuous mesh
+
+sub voxy pallete:
+	sub voxel shapes (continuous meshes), colors/textures
+
+sub voxy mesh:
+	discrete voxy mesh, replace voxel array with subvoxel array, subvoxelized continuous mesh
+
+
+
+
