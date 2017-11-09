@@ -15,7 +15,7 @@ voxel:
 
 sub voxel:
 	voxel
-	sub voxel shape
+	continuous mesh
 	color/texture
 
 discrete voxy mesh:
