@@ -9,7 +9,7 @@ include_directories(include)
 # these instructions search the directory tree when cmake is
 # invoked and put all files that match the pattern in the variables
 # `sources` and `data`
-file(GLOB_RECURSE sources      src/*.cpp src/main/*.hpp)
+file(GLOB_RECURSE sources      src/*.cpp include/*.hpp)
 file(GLOB_RECURSE sources_test test/*.cpp)
 file(GLOB_RECURSE data resources/*)
 
@@ -18,7 +18,8 @@ file(GLOB_RECURSE data resources/*)
 ###############################################################################
 
 # add the data to the target, so it becomes visible in some IDE
-add_executable(voxy ${sources} ${data})
+add_library(voxy SHARED ${sources})
+#add_executable(voxy ${sources} ${data})
 
 # just for example add some compiler flags
 target_compile_options(voxy PUBLIC -std=c++1y -Wall -Wfloat-conversion)
@@ -35,11 +36,8 @@ if (NOT "$ENV{CGAL_DIR}" STREQUAL "")
     set(CGAL_DIR "$ENV{CGAL_DIR}" CACHE INTERNAL "Copied from environment variable")
 endif()
 
-message("CGAL_DIR = ${CGAL_DIR}")
-
 find_package(ASSIMP 3.3.1 REQUIRED)
 find_package(CGAL 4.11 REQUIRED COMPONENTS Core)
-
 
 include_directories(${CGAL_INCLUDE_DIRS})
 include_directories(${ASSIMP_INCLUDE_DIRS})
@@ -54,9 +52,9 @@ target_link_libraries(voxy PUBLIC
 
 # this is for our testing framework
 # we don't add REQUIRED because it's just for testing
-find_package(GTest)
+#find_package(GTest)
 
-if(GTEST_FOUND)
+if(TESTING)
     add_executable(unit_tests ${sources_test} ${sources})
 
     # we add this define to prevent collision with the main
@@ -66,16 +64,16 @@ if(GTEST_FOUND)
 
     # this allows us to use our executable as a link library
     # therefore we can inherit all compiler options and library dependencies
-    set_target_properties(example PROPERTIES ENABLE_EXPORTS on)
+    set_target_properties(unit_tests PROPERTIES ENABLE_EXPORTS on)
 
-    target_link_libraries(unit_tests PUBLIC
-            ${GTEST_BOTH_LIBRARIES}
-            example
-            )
+    #target_link_libraries(unit_tests PUBLIC
+    #        ${GTEST_BOTH_LIBRARIES}
+    #        example
+    #        )
 
-    target_include_directories(unit_tests PUBLIC
-            ${GTEST_INCLUDE_DIRS} # doesn't do anything on Linux
-            )
+    #target_include_directories(unit_tests PUBLIC
+    #       ${GTEST_INCLUDE_DIRS} # doesn't do anything on Linux
+    #       )
 endif()
 
 ###############################################################################
