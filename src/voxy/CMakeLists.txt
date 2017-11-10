@@ -36,8 +36,12 @@ if (NOT "$ENV{CGAL_DIR}" STREQUAL "")
     set(CGAL_DIR "$ENV{CGAL_DIR}" CACHE INTERNAL "Copied from environment variable")
 endif()
 
-find_package(ASSIMP 3.3.1 REQUIRED)
-find_package(CGAL 4.11 REQUIRED COMPONENTS Core)
+if (NOT "$ENV{ASSIMP_ROOT_DIR}" STREQUAL "")
+    set(ASSIMP_ROOT_DIR "$ENV{ASSIMP_ROOT_DIR}" CACHE INTERNAL "Copied from environment variable")
+endif()
+
+find_package(ASSIMP REQUIRED)
+find_package(CGAL REQUIRED COMPONENTS Core)
 
 include_directories(${CGAL_INCLUDE_DIRS})
 include_directories(${ASSIMP_INCLUDE_DIRS})

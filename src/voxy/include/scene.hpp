@@ -12,6 +12,8 @@
 #ifndef VOXY_SCENE_HPP
 #define VOXY_SCENE_HPP
 
+#include <assimp/scene.h>
+#include <vector>
 
 #include "palette.hpp"
 #include "voxel.hpp"
@@ -19,10 +21,11 @@
 namespace voxy {
 class scene {
 public:
-  //std::vector<voxy::voxel> voxels;
+  std::vector<voxy::voxel> voxels;
   voxy::palette palette;
-
-  // mesh representation of object
+  aiScene continuous_scene;
+  aiScene discrete_scene;
+  void voxelize(int pMaximumVoxels);
 };
 } // namespace voxy
 #endif // VOXY_SCENE_HPP

@@ -19,6 +19,10 @@ voxy::voxel::voxel(int pX, int pY, int pZ) {
 
   mMembership = 0.0f;
   mVisibility = 0.0f;
+
+  mShapeID = VOXY_ID_NOT_SET;
+  mColourID = VOXY_ID_NOT_SET;
+  mTextureID = VOXY_ID_NOT_SET;
 }
 
 void voxy::voxel::set_membership(float pMembership) {
@@ -33,4 +37,25 @@ void voxy::voxel::set_visibility(float pVisibility) {
   ASSERT(pVisibility < 1.0f)
 
   mVisibility = pVisibility;
+}
+
+void voxy::voxel::set_shapeID(int pShapeID) {
+  ASSERT(pShapeID >= 0)
+  ASSERT(pShapeID != VOXY_ID_NOT_SET)
+
+  mShapeID = pShapeID;
+}
+
+void voxy::voxel::set_colourID(int pColourID) {
+  ASSERT(pColourID >= 0)
+  ASSERT(pColourID != VOXY_ID_NOT_SET)
+
+  mColourID = pColourID;
+}
+
+void voxy::voxel::set_textureID(int pTextureID) {
+  ASSERT(pTextureID >= 0)
+  ASSERT(pTextureID != VOXY_ID_NOT_SET)
+
+  mTextureID = pTextureID;
 }
