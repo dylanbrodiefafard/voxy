@@ -32,23 +32,43 @@ file(COPY ${data} DESTINATION resources)
 ## dependencies ###############################################################
 ###############################################################################
 
-if (NOT "$ENV{CGAL_DIR}" STREQUAL "")
-    set(CGAL_DIR "$ENV{CGAL_DIR}" CACHE INTERNAL "Copied from environment variable")
-endif()
 
+# ASSIMP for 3D import/export and data structures
 if (NOT "$ENV{ASSIMP_ROOT_DIR}" STREQUAL "")
     set(ASSIMP_ROOT_DIR "$ENV{ASSIMP_ROOT_DIR}" CACHE INTERNAL "Copied from environment variable")
 endif()
-
 find_package(ASSIMP REQUIRED)
-find_package(CGAL REQUIRED COMPONENTS Core)
-
-include_directories(${CGAL_INCLUDE_DIRS})
 include_directories(${ASSIMP_INCLUDE_DIRS})
+
+# CGAL for geometric algorithms
+if (NOT "$ENV{CGAL_DIR}" STREQUAL "")
+    set(CGAL_DIR "$ENV{CGAL_DIR}" CACHE INTERNAL "Copied from environment variable")
+endif()
+find_package(CGAL REQUIRED COMPONENTS Core)
+include_directories(${CGAL_INCLUDE_DIRS})
+
+# Boost for filesystem
+if (NOT "$ENV{BOOST_ROOT}" STREQUAL "")
+    set(BOOST_ROOT "$ENV{BOOST_ROOT}" CACHE INTERNAL "Copied from environment variable")
+endif()
+if (NOT "$ENV{BOOST_INCLUDEDIR}" STREQUAL "")
+    set(BOOST_INCLUDEDIR "$ENV{BOOST_INCLUDEDIR}" CACHE INTERNAL "Copied from environment variable")
+endif()
+if (NOT "$ENV{BOOST_LIBRARYDIR}" STREQUAL "")
+    set(BOOST_LIBRARYDIR "$ENV{BOOST_LIBRARYDIR}" CACHE INTERNAL "Copied from environment variable")
+endif()
+
+#set(Boost_USE_MULTITHREADED ON)
+#set(Boost_USE_STATIC_RUNTIME OFF)
+#add_definitions( -DBOOST_ALL_NO_LIB )
+#add_definitions( -DBOOST_ALL_DYN_LINK )
+find_package(Boost COMPONENTS system filesystem REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
+
 target_link_libraries(voxy PUBLIC
         ${ASSIMP_LIBRARIES}
         ${CGAL_LIBRARIES}
-        )
+        ${Boost_LIBRARIES})
 
 ###############################################################################
 ## testing ####################################################################
