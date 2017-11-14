@@ -10,7 +10,7 @@
  */
 
 #include "voxel.hpp"
-#include "debug.hpp"
+#include "config.hpp"
 
 voxy::voxel::voxel(int pX, int pY, int pZ) {
   mX = pX;

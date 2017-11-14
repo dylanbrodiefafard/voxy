@@ -32,44 +32,55 @@ file(COPY ${data} DESTINATION resources)
 ## dependencies ###############################################################
 ###############################################################################
 
+# TODO: Remove this junk
+SET(ENV_HINTS "CGAL_DIR;ASSIMP_ROOT_DIR;BOOST_ROOT;BOOST_INCLUDEDIR;BOOST_LIBRARYDIR")
+foreach(ENV_HINT ${ENV_HINTS})
+    if(NOT "$ENV{${ENV_HINT}}" STREQUAL "")
+        set(${ENV_HINT} "$ENV{${ENV_HINT}}" CACHE INTERNAL "Copied from environment variable")
+    endif()
+endforeach()
 
-# ASSIMP for 3D import/export and data structures
-if (NOT "$ENV{ASSIMP_ROOT_DIR}" STREQUAL "")
-    set(ASSIMP_ROOT_DIR "$ENV{ASSIMP_ROOT_DIR}" CACHE INTERNAL "Copied from environment variable")
-endif()
-find_package(ASSIMP REQUIRED)
-include_directories(${ASSIMP_INCLUDE_DIRS})
+set(Boost_USE_STATIC_LIBS        OFF)
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME     OFF)
+set(BOOST_ALL_DYN_LINK           ON)   # force dynamic linking for all libraries
+find_package(Boost COMPONENTS thread system filesystem log REQUIRED)
+
+if (WIN32 AND __COMPILER_GNU)
+    # mingw-gcc fails to link boost::thread
+    message("Adding BOOST_THREAD_USE_LIB")
+    add_definitions(-DBOOST_THREAD_USE_LIB)
+endif (WIN32 AND __COMPILER_GNU)
+add_definitions(-DBOOST_LOG_DYN_LINK)
+
+message("Found Boost.")
+message("Boost_LIBRARIES: ${Boost_LIBRARIES}")
+#target_link_libraries(voxy PUBLIC Boost::system Boost::filesystem Boost::log Boost::thread)
 
 # CGAL for geometric algorithms
-if (NOT "$ENV{CGAL_DIR}" STREQUAL "")
-    set(CGAL_DIR "$ENV{CGAL_DIR}" CACHE INTERNAL "Copied from environment variable")
-endif()
-find_package(CGAL REQUIRED COMPONENTS Core)
-include_directories(${CGAL_INCLUDE_DIRS})
+set(CGAL_Boost_USE_STATIC_LIBS FALSE)
+find_package(CGAL COMPONENTS Core REQUIRED)
 
-# Boost for filesystem
-if (NOT "$ENV{BOOST_ROOT}" STREQUAL "")
-    set(BOOST_ROOT "$ENV{BOOST_ROOT}" CACHE INTERNAL "Copied from environment variable")
-endif()
-if (NOT "$ENV{BOOST_INCLUDEDIR}" STREQUAL "")
-    set(BOOST_INCLUDEDIR "$ENV{BOOST_INCLUDEDIR}" CACHE INTERNAL "Copied from environment variable")
-endif()
-if (NOT "$ENV{BOOST_LIBRARYDIR}" STREQUAL "")
-    set(BOOST_LIBRARYDIR "$ENV{BOOST_LIBRARYDIR}" CACHE INTERNAL "Copied from environment variable")
-endif()
+message("Found CGAL.")
 
-#set(Boost_USE_MULTITHREADED ON)
-#set(Boost_USE_STATIC_RUNTIME OFF)
-#add_definitions( -DBOOST_ALL_NO_LIB )
-#add_definitions( -DBOOST_ALL_DYN_LINK )
-find_package(Boost COMPONENTS system filesystem REQUIRED)
+message("CGAL_CXX_FLAGS_INIT: ${CGAL_CXX_FLAGS_INIT}")
+#add_definitions(${CGAL_CXX_GLAFS_INIT})
 
-include_directories(${Boost_INCLUDE_DIR})
+message("CGAL_LIBRARIES: ${CGAL_LIBRARIES}")
+#target_link_libraries(voxy PUBLIC CGAL)
 
-target_link_libraries(voxy PUBLIC
-        ${ASSIMP_LIBRARIES}
-        ${CGAL_LIBRARIES}
-        ${Boost_LIBRARIES})
+# ASSIMP for 3D import/export and data structures
+find_package(ASSIMP REQUIRED)
+
+message("Found ASSIMP.")
+message("ASSIMP_LIBRARIES: ${ASSIMP_LIBRARIES}")
+
+
+target_link_libraries(voxy
+        ASSIMP
+        Boost::system Boost::filesystem Boost::log Boost::thread
+        CGAL)
+
 
 ###############################################################################
 ## testing ####################################################################
@@ -91,10 +102,14 @@ if(TESTING)
     # therefore we can inherit all compiler options and library dependencies
     set_target_properties(unit_tests PROPERTIES ENABLE_EXPORTS on)
 
+    target_link_libraries(unit_tests
+            ASSIMP
+            Boost::system Boost::filesystem Boost::log Boost::thread
+            CGAL)
     #target_link_libraries(unit_tests PUBLIC
-    #        ${GTEST_BOTH_LIBRARIES}
-    #        example
-    #        )
+    #        ASSIMP
+    #        CGAL
+    #        Boost::system Boost::filesystem Boost::log Boost::thread)
 
     #target_include_directories(unit_tests PUBLIC
     #       ${GTEST_INCLUDE_DIRS} # doesn't do anything on Linux

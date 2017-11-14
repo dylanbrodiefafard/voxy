@@ -12,8 +12,8 @@
 #ifndef VOXY_IMPORTER_HPP
 #define VOXY_IMPORTER_HPP
 
-#include <experimental/optional>
 #include <string>
+#include <boost/optional.hpp>
 
 #include "palette.hpp"
 #include "scene.hpp"
@@ -21,7 +21,7 @@
 namespace voxy {
 class importer {
 public:
-  static std::experimental::optional<voxy::palette>
+  static boost::optional<voxy::palette>
   load_palette_from_folder(std::string pFolderName);
 
 private:
