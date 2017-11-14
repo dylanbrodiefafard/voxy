@@ -63,6 +63,7 @@ endif()
 #add_definitions( -DBOOST_ALL_NO_LIB )
 #add_definitions( -DBOOST_ALL_DYN_LINK )
 find_package(Boost COMPONENTS system filesystem REQUIRED)
+
 include_directories(${Boost_INCLUDE_DIR})
 
 target_link_libraries(voxy PUBLIC
